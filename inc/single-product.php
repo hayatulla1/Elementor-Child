@@ -86,9 +86,6 @@ function hkdev_custom_single_product_shortcode($atts) {
 
     ob_start();
     ?>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
     <div id="product-<?php echo esc_attr($product_id); ?>" <?php wc_product_class('hkdev-sp-wrapper', $product); ?>>
         
         <?php 
@@ -147,10 +144,10 @@ function hkdev_custom_single_product_shortcode($atts) {
                 <nav class="hkdev-sp-breadcrumb">
                     <a href="<?php echo home_url(); ?>"><?php echo function_exists('hkdev_t') ? hkdev_t('home') : 'Home'; ?></a> <i class="fa-solid fa-angle-right"></i>
                     <a href="<?php echo get_permalink(wc_get_page_id('shop')); ?>"><?php echo function_exists('hkdev_t') ? hkdev_t('shop') : 'Shop'; ?></a> <i class="fa-solid fa-angle-right"></i>
-                    <span class="current-crumb"><?php echo $product->get_name(); ?></span>
+                    <span class="current-crumb"><?php echo esc_html( $product->get_name() ); ?></span>
                 </nav>
 
-                <h1 class="hkdev-sp-title"><?php echo $product->get_name(); ?></h1>
+                <h1 class="hkdev-sp-title"><?php echo esc_html( $product->get_name() ); ?></h1>
 
                 <div class="hkdev-sp-price-box">
                     <?php echo $product->get_price_html(); ?>

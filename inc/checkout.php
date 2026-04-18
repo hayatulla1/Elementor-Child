@@ -94,12 +94,7 @@ function hkdev_custom_checkout_shortcode() {
     if ( is_admin() ) return;
 
     ob_start();
-    ?>
-    <!-- External Fonts & Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <?php
     // --- A. THANK YOU PAGE LOGIC ---
     $order_id = isset($_GET['order-received']) ? absint($_GET['order-received']) : get_query_var('order-received');
     if ( $order_id ) {
@@ -120,7 +115,7 @@ function hkdev_custom_checkout_shortcode() {
             <div class="hkdev-co-success-hero">
                 <div class="success-anim-icon"><i class="fa-solid fa-circle-check"></i></div>
                 <h2>Order Successful!</h2>
-                <p>Order # <strong>#<?php echo $order->get_order_number(); ?></strong></p>
+                <p>Order # <strong>#<?php echo esc_html( $order->get_order_number() ); ?></strong></p>
                 <p class="sub-text">Thank you for shopping with us.</p>
             </div>
 
@@ -136,11 +131,11 @@ function hkdev_custom_checkout_shortcode() {
                     <div class="summary-table-wrap">
                         <?php 
                         foreach ( $order->get_items() as $item_id => $item ) : 
-                            $product = $item->get_product(); 
-                            $item_name = apply_filters( 'woocommerce_order_item_name', $item->get_name(), $item, false );
+                            $product   = $item->get_product(); 
+                            $item_name = apply_filters( 'woocommerce_order_item_name', esc_html( $item->get_name() ), $item, false );
                         ?>
                             <div class="hkdev-co-summary-table-row">
-                                <div class="prod-img"><?php echo $product ? $product->get_image( 'thumbnail' ) : ''; ?></div>
+                                <div class="prod-img"><?php echo $product ? wp_kses_post( $product->get_image( 'thumbnail' ) ) : ''; ?></div>
                                 <div class="prod-info">
                                     <span class="name"><?php echo $item_name; ?></span>
                                     <span class="qty">Qty: <?php echo $item->get_quantity(); ?></span>
@@ -264,7 +259,13 @@ function hkdev_custom_checkout_shortcode() {
                                 woocommerce_form_field( $key, $field, $checkout->get_value( $key ) );
                             }
                             ?>
-                            <input type="hidden" name="billing_email" value="guest_<?php echo time(); ?>@website.com">
+                            <input type="hidden" name="billing_email" value="<?php
+                            // Derive a stable, non-predictable placeholder email from the
+                            // WooCommerce session ID so the same value is used throughout
+                            // the current checkout session.
+                            $guest_email = 'guest_' . substr( md5( WC()->session->get_customer_id() ), 0, 8 ) . '@order.local';
+                            echo esc_attr( $guest_email );
+                        ?>">
                         </div>
 
                         <div id="hkdev-co-totals-ajax">
@@ -304,8 +305,8 @@ function hkdev_co_get_items_html() {
             $item_name = apply_filters( 'woocommerce_cart_item_name', $_prod->get_name(), $item, $key );
             $line_total = apply_filters( 'woocommerce_cart_item_subtotal', wc_price($item['line_total']), $item, $key );
         ?>
-            <div class="hkdev-co-summary-item" data-key="<?php echo $key; ?>">
-                <div class="item-img-box"><?php echo $_prod->get_image(); ?></div>
+            <div class="hkdev-co-summary-item" data-key="<?php echo esc_attr( $key ); ?>">
+                <div class="item-img-box"><?php echo wp_kses_post( $_prod->get_image() ); ?></div>
                 <div class="item-meta">
                     <h4 class="item-name"><?php echo $item_name; ?></h4>
                     <div class="item-price-bottom"><span class="item-price-val"><?php echo $line_total; ?></span></div>
@@ -390,26 +391,37 @@ function hkdev_co_get_totals_html() {
 add_action('wp_ajax_hkdev_co_checkout_update_cart', 'hkdev_co_ajax_update_cart_handler');
 add_action('wp_ajax_nopriv_hkdev_co_checkout_update_cart', 'hkdev_co_ajax_update_cart_handler');
 function hkdev_co_ajax_update_cart_handler() {
-    if(isset($_POST['type'])) {
-        if($_POST['type'] === 'qty') WC()->cart->set_quantity($_POST['key'], intval($_POST['qty']), true);
-        elseif($_POST['type'] === 'remove') WC()->cart->remove_cart_item($_POST['key']);
-    }
-    if(isset($_POST['shipping_method'])) WC()->session->set('chosen_shipping_methods', $_POST['shipping_method']);
-    
-    WC()->cart->calculate_totals();
-    if (WC()->cart->is_empty()) wp_send_json_success(['cart_empty' => true]);
+    check_ajax_referer( 'hkdev_co_nonce', 'security' );
 
-    wp_send_json_success([
-        'items_html' => hkdev_co_get_items_html(),
-        'totals_html' => hkdev_co_get_totals_html()
-    ]);
+    if ( isset( $_POST['type'] ) ) {
+        $type = sanitize_text_field( $_POST['type'] );
+        if ( $type === 'qty' && isset( $_POST['key'], $_POST['qty'] ) ) {
+            WC()->cart->set_quantity( sanitize_key( $_POST['key'] ), absint( $_POST['qty'] ), true );
+        } elseif ( $type === 'remove' && isset( $_POST['key'] ) ) {
+            WC()->cart->remove_cart_item( sanitize_key( $_POST['key'] ) );
+        }
+    }
+    if ( isset( $_POST['shipping_method'] ) && is_array( $_POST['shipping_method'] ) ) {
+        $sanitized = array_map( 'sanitize_text_field', $_POST['shipping_method'] );
+        WC()->session->set( 'chosen_shipping_methods', $sanitized );
+    }
+
+    WC()->cart->calculate_totals();
+    if ( WC()->cart->is_empty() ) wp_send_json_success( [ 'cart_empty' => true ] );
+
+    wp_send_json_success( [
+        'items_html'  => hkdev_co_get_items_html(),
+        'totals_html' => hkdev_co_get_totals_html(),
+    ] );
 }
 
 add_action('wp_ajax_hkdev_co_apply_coupon', 'hkdev_co_apply_coupon_handler');
 add_action('wp_ajax_nopriv_hkdev_co_apply_coupon', 'hkdev_co_apply_coupon_handler');
 function hkdev_co_apply_coupon_handler() {
-    $coupon_code = isset($_POST['coupon_code']) ? sanitize_text_field($_POST['coupon_code']) : '';
-    if (empty($coupon_code)) wp_send_json_error(['message' => 'Enter Coupon']);
+    check_ajax_referer( 'hkdev_co_nonce', 'security' );
+
+    $coupon_code = isset( $_POST['coupon_code'] ) ? sanitize_text_field( $_POST['coupon_code'] ) : '';
+    if ( empty( $coupon_code ) ) wp_send_json_error( [ 'message' => 'Enter Coupon' ] );
 
     $applied = WC()->cart->add_discount($coupon_code);
     WC()->cart->calculate_totals();
@@ -428,8 +440,10 @@ function hkdev_co_apply_coupon_handler() {
 add_action('wp_ajax_hkdev_co_remove_coupon', 'hkdev_co_remove_coupon_handler');
 add_action('wp_ajax_nopriv_hkdev_co_remove_coupon', 'hkdev_co_remove_coupon_handler');
 function hkdev_co_remove_coupon_handler() {
-    $coupon_code = isset($_POST['coupon_code']) ? sanitize_text_field($_POST['coupon_code']) : '';
-    if (!empty($coupon_code)) WC()->cart->remove_coupon($coupon_code); 
+    check_ajax_referer( 'hkdev_co_nonce', 'security' );
+
+    $coupon_code = isset( $_POST['coupon_code'] ) ? sanitize_text_field( $_POST['coupon_code'] ) : '';
+    if ( ! empty( $coupon_code ) ) WC()->cart->remove_coupon( $coupon_code ); 
     WC()->cart->calculate_totals();
     wc_clear_notices();
     wp_send_json_success(['message' => 'Coupon Removed', 'items_html' => hkdev_co_get_items_html(), 'totals_html' => hkdev_co_get_totals_html()]);
@@ -445,8 +459,8 @@ function hkdev_co_ajax_place_order_handler() {
 
     if ( WC()->cart->is_empty() ) { wp_send_json_error(['message' => 'Cart is empty']); }
 
-    $phone = sanitize_text_field($_POST['billing_phone']);
-    if ( ! preg_match( '/^(?:\+?88)?01[3-9]\d{8}$/', $phone ) ) {
+    $phone = isset( $_POST['billing_phone'] ) ? sanitize_text_field( $_POST['billing_phone'] ) : '';
+    if ( empty( $phone ) || ! preg_match( '/^(?:\+?88)?01[3-9]\d{8}$/', $phone ) ) {
         wp_send_json_error(['message' => 'Invalid Phone Number']);
     }
 

@@ -58,7 +58,8 @@ function hkdev_save_size_chart_field( $post_id ) {
 add_action( 'admin_enqueue_scripts', 'hkdev_size_chart_admin_scripts' );
 function hkdev_size_chart_admin_scripts( $hook ) {
     global $post;
-    if ( ( $hook == 'post-new.php' || $hook == 'post.php' ) && 'product' === $post->post_type ) {
+    if ( ! $post ) return;
+    if ( ( $hook === 'post-new.php' || $hook === 'post.php' ) && 'product' === $post->post_type ) {
         wp_enqueue_media(); // Load WP Media Library system
     }
 }

@@ -27,11 +27,7 @@ function hkdev_custom_cart_shortcode() {
     if ( is_admin() ) return;
 
     ob_start();
-    ?>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <?php
     if ( WC()->cart->is_empty() ) {
         ?>
         <div class="hkdev-cart-empty-wrap">

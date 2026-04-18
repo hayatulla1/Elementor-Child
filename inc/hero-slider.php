@@ -64,7 +64,7 @@ function hkdev_save_banner_link_data( $post_id ) {
     if ( ! current_user_can( 'edit_post', $post_id ) ) return;
 
     if ( isset( $_POST['hkdev_banner_link'] ) ) {
-        update_post_meta( $post_id, '_hkdev_banner_link', sanitize_text_field( $_POST['hkdev_banner_link'] ) );
+        update_post_meta( $post_id, '_hkdev_banner_link', esc_url_raw( $_POST['hkdev_banner_link'] ) );
     }
 }
 
@@ -128,11 +128,6 @@ function hkdev_hero_slider_shortcode( $atts ) {
 
     ob_start();
     ?>
-    <!-- Swiper CSS & FontAwesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-
     <div class="hkdev-hero-section-wrapper" id="<?php echo esc_attr( $unique_id ); ?>">
         <div class="swiper hkdev-hero-swiper" data-autoplay="<?php echo esc_attr( $autoplay_data ); ?>">
             <div class="swiper-wrapper">
