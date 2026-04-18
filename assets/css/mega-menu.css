@@ -1,0 +1,146 @@
+/* Base Wrapper */
+.hkdev-mm-wrapper {
+    position: relative;
+    display: inline-block;
+    font-family: 'Hind Siliguri', sans-serif;
+}
+
+/* Main Toggle Button */
+.hkdev-mm-btn {
+    background: #2E5A35;
+    color: #fff;
+    padding: 12px 22px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.hkdev-mm-btn:hover {
+    background: #E31E24;
+}
+
+/* Dropdown Container */
+.hkdev-mm-content {
+    display: none;
+    position: absolute;
+    background: #fff;
+    min-width: 480px; /* Increased width for mega menu */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+    padding: 20px;
+    border-radius: 10px;
+    top: 100%;
+    left: 0;
+    margin-top: 10px;
+    z-index: 9999;
+    border: 1px solid #eee;
+}
+
+.hkdev-mm-content.show {
+    display: block;
+}
+
+/* Grid System */
+.hkdev-mm-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px 15px; /* Added more vertical gap for child elements */
+}
+
+/* Parent Item Design */
+.hkdev-mm-item {
+    text-decoration: none;
+    padding: 10px 14px;
+    border-radius: 8px;
+    background: #f9fdfa; /* Slightly tinted bg for parent */
+    display: block;
+    transition: all 0.25s ease;
+    border: 1px solid #e8f3ea;
+}
+
+.hkdev-mm-item:hover {
+    border-color: #2E5A35;
+    transform: translateY(-2px);
+}
+
+.hkdev-mm-name {
+    display: block;
+    font-weight: 700;
+    color: #2E5A35;
+    font-size: 15px;
+    line-height: 1.2;
+}
+
+.hkdev-mm-count {
+    display: block;
+    font-size: 12px;
+    color: #777;
+    margin-top: 4px;
+}
+
+/* Child Categories List */
+.hkdev-mm-children {
+    list-style: none;
+    padding: 0;
+    margin: 8px 0 0 10px;
+}
+
+.hkdev-mm-children li {
+    margin-bottom: 6px;
+}
+
+.hkdev-mm-children a {
+    text-decoration: none;
+    color: #555;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    transition: color 0.2s;
+}
+
+.hkdev-mm-children a svg {
+    margin-right: 5px;
+    color: #ccc;
+    transition: transform 0.2s, color 0.2s;
+}
+
+.hkdev-mm-children a:hover {
+    color: #E31E24; /* Red color on hover */
+}
+
+.hkdev-mm-children a:hover svg {
+    color: #E31E24;
+    transform: translateX(3px); /* Arrow slight move */
+}
+
+/* Desktop Hover Trigger */
+@media(min-width: 769px) {
+    .hkdev-mm-wrapper:hover .hkdev-mm-content {
+        display: block;
+    }
+}
+
+/* Mobile Specific Optimizations */
+@media(max-width: 768px) {
+    .hkdev-mm-content {
+        min-width: 300px;
+        width: 92vw;
+        max-width: 360px;
+        padding: 15px;
+    }
+    
+    .hkdev-mm-grid {
+        grid-template-columns: 1fr; /* 1 column on mobile to fit children */
+        gap: 15px;
+    }
+    
+    .hkdev-mm-btn {
+        padding: 10px 18px;
+        font-size: 15px;
+    }
+}

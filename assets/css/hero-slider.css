@@ -1,0 +1,115 @@
+:root {
+    /* ============================================================== */
+    /* 🎨 BRAND COLORS FOR HERO SLIDER                               */
+    /* ============================================================== */
+    --hkdev-hero-primary: #1b5e20;      /* Main Brand Color (Green) */
+    --hkdev-hero-arrow-bg: rgba(255, 255, 255, 0.8); /* Arrow Box Color */
+    --hkdev-hero-arrow-icon: #1b5e20;   /* Arrow Icon Color */
+    /* ============================================================== */
+}
+
+.hkdev-hero-section-wrapper {
+    width: 100% !important;
+    max-width: 1920px !important;
+    margin: 0 auto !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+.hkdev-hero-swiper {
+    width: 100% !important;
+    /* 1920x1080 is exactly 16/9 aspect ratio */
+    /* This makes it perfectly responsive on all devices */
+    aspect-ratio: 16 / 9 !important; 
+    max-height: 700px !important; /* Cap height on ultrawide screens */
+    background-color: #f3f4f6 !important; 
+}
+
+.hkdev-hero-slide {
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+}
+
+.hkdev-hero-link {
+    width: 100% !important;
+    height: 100% !important;
+    display: block !important;
+}
+
+.hkdev-hero-slide img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center !important;
+    display: block !important;
+}
+
+/* Navigation Arrows */
+.hkdev-hero-nav-btn {
+    position: absolute !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    width: 45px !important;
+    height: 45px !important;
+    background-color: var(--hkdev-hero-arrow-bg) !important;
+    color: var(--hkdev-hero-arrow-icon) !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    z-index: 10 !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+    transition: all 0.3s ease !important;
+    font-size: 18px !important;
+    opacity: 0 !important; /* Hidden by default, shows on hover */
+}
+
+.hkdev-hero-section-wrapper:hover .hkdev-hero-nav-btn {
+    opacity: 1 !important;
+}
+
+.hkdev-hero-nav-btn:hover {
+    background-color: var(--hkdev-hero-primary) !important;
+    color: #fff !important;
+    transform: translateY(-50%) scale(1.1) !important;
+}
+
+.hkdev-hero-prev { left: 20px !important; }
+.hkdev-hero-next { right: 20px !important; }
+
+/* Swiper Pagination Dots */
+.hkdev-hero-swiper .swiper-pagination-bullet {
+    background: #ffffff !important;
+    opacity: 0.6 !important;
+    width: 10px !important;
+    height: 10px !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2) !important;
+}
+
+.hkdev-hero-swiper .swiper-pagination-bullet-active {
+    background: var(--hkdev-hero-primary) !important;
+    opacity: 1 !important;
+    width: 25px !important; /* Capsule shaped active dot */
+    border-radius: 5px !important;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .hkdev-hero-nav-btn {
+        width: 35px !important;
+        height: 35px !important;
+        font-size: 14px !important;
+        opacity: 1 !important; /* Always show arrows on mobile */
+    }
+    .hkdev-hero-prev { left: 10px !important; }
+    .hkdev-hero-next { right: 10px !important; }
+    
+    .hkdev-hero-swiper .swiper-pagination-bullet { width: 8px !important; height: 8px !important; }
+    .hkdev-hero-swiper .swiper-pagination-bullet-active { width: 20px !important; }
+}

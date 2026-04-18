@@ -1,0 +1,66 @@
+/* ==============================================================
+   HKDEV BOGO OFFER STYLES
+============================================================== */
+
+/* 1. Cart & Checkout Item Badge */
+.hkdev-bogo-cart-badge {
+    display: inline-block;
+    margin-top: 5px;
+    background: #e8f5e9;
+    color: #2e7d32;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: 'Hind Siliguri', sans-serif;
+}
+
+/* 2. Shop Grid Badge */
+.hkdev-bogo-grid-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #e8f5e9;
+    color: #2e7d32;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    z-index: 9;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    font-family: 'Hind Siliguri', sans-serif;
+}
+
+/* 3. Single Product Notice Banner */
+.hkdev-bogo-sp-notice {
+    background: #e8f5e9;
+    border: 1px solid #c8e6c9;
+    color: #2e7d32;
+    padding: 10px 15px;
+    border-radius: 6px;
+    margin: 15px 0;
+    font-weight: 600;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Hind Siliguri', sans-serif;
+}
+
+
+
+/* HKDEV Flower Confetti Animation */
+.hkdev-confetti-piece {
+    position: fixed;
+    top: -50px;
+    z-index: 9999999; /* সর্বোচ্চ উপরে দেখানোর জন্য */
+    pointer-events: none; /* ইউজার যাতে ক্লিক করতে না পারে */
+    user-select: none;
+    animation: hkdev-fall linear forwards;
+}
+
+@keyframes hkdev-fall {
+    to {
+        transform: translateY(110vh) rotate(720deg); /* নিচে পড়বে এবং ঘুরবে */
+    }
+}

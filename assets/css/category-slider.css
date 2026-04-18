@@ -1,0 +1,135 @@
+@import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap');
+
+:root {
+    /* ============================================================== */
+    /* 🎨 BRAND COLORS FOR CATEGORY SLIDER                           🎨 */
+    /* ============================================================== */
+    --hkdev-cat-primary: #27ae60;      /* Arrow Background Color (Green) */
+    --hkdev-cat-bg:      #eaeaea;      /* Section Background (Light Gray) */
+    --hkdev-cat-text:    #1f2937;      /* Category Text Color */
+    /* ============================================================== */
+}
+
+.hkdev-cat-section-wrapper {
+    background-color: var(--hkdev-cat-bg) !important;
+    padding: 40px 0 !important;
+    font-family: 'Hind Siliguri', sans-serif !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.hkdev-cat-container {
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+    position: relative !important;
+    padding: 0 40px !important; /* Space for arrows */
+}
+
+/* Swiper Container */
+.hkdev-category-swiper {
+    width: 100% !important;
+    overflow: hidden !important;
+    padding: 15px 0 !important; /* Space for drop shadows */
+}
+
+/* Individual Slide */
+.hkdev-cat-slide {
+    text-align: center !important;
+    transition: 0.3s !important;
+}
+
+.hkdev-cat-link {
+    text-decoration: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 12px !important;
+}
+
+/* Image Box (White Square with rounded corners) */
+.hkdev-cat-img-box {
+    background: #ffffff !important;
+    width: 120px !important;
+    height: 120px !important;
+    border-radius: 16px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 15px !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05) !important;
+    transition: all 0.3s ease !important;
+    margin: 0 auto !important;
+    box-sizing: border-box !important;
+}
+
+.hkdev-cat-img-box img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important; /* Ensures icon fits nicely */
+    transition: transform 0.3s ease !important;
+}
+
+.hkdev-cat-slide:hover .hkdev-cat-img-box {
+    transform: translateY(-5px) !important;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+.hkdev-cat-slide:hover .hkdev-cat-img-box img {
+    transform: scale(1.1) !important;
+}
+
+/* Category Text */
+.hkdev-cat-name {
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    color: var(--hkdev-cat-text) !important;
+    text-transform: capitalize !important;
+}
+
+/* Navigation Arrows */
+.hkdev-cat-nav-btn {
+    position: absolute !important;
+    top: 40% !important;
+    transform: translateY(-50%) !important;
+    width: 40px !important;
+    height: 40px !important;
+    background-color: var(--hkdev-cat-primary) !important;
+    color: #ffffff !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    z-index: 10 !important;
+    box-shadow: 0 4px 10px rgba(39, 174, 96, 0.3) !important;
+    transition: all 0.2s ease !important;
+    font-size: 14px !important;
+}
+
+.hkdev-cat-nav-btn:hover {
+    background-color: #1e8449 !important;
+    transform: translateY(-50%) scale(1.1) !important;
+}
+
+.hkdev-cat-prev { left: 0 !important; }
+.hkdev-cat-next { right: 0 !important; }
+
+.swiper-button-disabled {
+    opacity: 0.5 !important;
+    cursor: not-allowed !important;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .hkdev-cat-container { padding: 0 30px !important; }
+    .hkdev-cat-img-box { width: 90px !important; height: 90px !important; border-radius: 12px !important; padding: 10px !important; }
+    .hkdev-cat-name { font-size: 13px !important; }
+    .hkdev-cat-nav-btn { width: 32px !important; height: 32px !important; font-size: 12px !important; }
+}
+
+@media (max-width: 480px) {
+    .hkdev-cat-container { padding: 0 20px !important; }
+    .hkdev-cat-img-box { width: 75px !important; height: 75px !important; border-radius: 10px !important; }
+    .hkdev-cat-name { font-size: 12px !important; }
+    .hkdev-cat-nav-btn { display: none !important; /* Hide arrows on very small screens for swipe-only */ }
+}
