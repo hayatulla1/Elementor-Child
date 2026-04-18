@@ -305,7 +305,7 @@ function hkdev_co_get_items_html() {
             $item_name = apply_filters( 'woocommerce_cart_item_name', $_prod->get_name(), $item, $key );
             $line_total = apply_filters( 'woocommerce_cart_item_subtotal', wc_price($item['line_total']), $item, $key );
         ?>
-            <div class="hkdev-co-summary-item" data-key="<?php echo esc_attr( $key ); ?>">
+            <div class="hkdev-co-summary-item" data-key="<?php echo esc_attr( $key ); ?>" data-free-count="<?php echo intval($item['hkdev_free_count'] ?? 0); ?>">
                 <div class="item-img-box"><?php echo wp_kses_post( $_prod->get_image() ); ?></div>
                 <div class="item-meta">
                     <h4 class="item-name"><?php echo $item_name; ?></h4>
@@ -324,6 +324,17 @@ function hkdev_co_get_items_html() {
                 </div>
             </div>
         <?php endforeach; ?>
+    </div>
+
+    <?php
+    $hkdev_total_qty  = WC()->cart->get_cart_contents_count();
+    $hkdev_total_free = function_exists('hkdev_get_total_free_items_in_cart') ? hkdev_get_total_free_items_in_cart() : 0;
+    $hkdev_paid_qty   = max(0, $hkdev_total_qty - $hkdev_total_free);
+    ?>
+    <div class="hkdev-co-items-count-summary">
+        <span class="paid-count">Paid Items: <strong><?php echo esc_html( $hkdev_paid_qty ); ?></strong></span>
+        <span class="separator"> | </span>
+        <span class="free-count">Free items: <strong><?php echo esc_html( $hkdev_total_free ); ?></strong></span>
     </div>
 
     <div class="hkdev-co-coupon-wrap">

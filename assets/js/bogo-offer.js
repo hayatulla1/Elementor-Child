@@ -52,7 +52,7 @@ jQuery(document).ready(function($) {
         let totalFreeCount = 0;
 
         // Method 1: From item meta data (most accurate)
-        $('.hkdev-co-summary-item').each(function() {
+        $('.hkdev-co-summary-item, .hkdev-cart-item-row').each(function() {
             const freeCount = parseInt($(this).data('free-count')) || 0;
             if (freeCount > 0) {
                 totalFreeCount += freeCount;
@@ -99,12 +99,24 @@ jQuery(document).ready(function($) {
      */
     function updateFreeItemCountDisplay() {
         const freeCount = countFreeItemsFromCart();
+
+        // Calculate total items (sum of quantities)
+        let totalItems = 0;
+        $('.hkdev-co-summary-item, .hkdev-cart-item-row').each(function() {
+            const qty = parseInt($(this).find('.hkdev-co-qty-val, .hkdev-qty-val').text()) || 0;
+            totalItems += qty;
+        });
+        const paidCount = Math.max(0, totalItems - freeCount);
         
         const $countSummary = $('.hkdev-co-items-count-summary');
         if ($countSummary.length > 0) {
             const $freeSpan = $countSummary.find('.free-count strong');
             if ($freeSpan.length) {
                 $freeSpan.text(freeCount);
+            }
+            const $paidSpan = $countSummary.find('.paid-count strong');
+            if ($paidSpan.length) {
+                $paidSpan.text(paidCount);
             }
         }
 
