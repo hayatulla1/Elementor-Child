@@ -40,7 +40,7 @@ jQuery(document).ready(function($) {
      * 3. AJAX CART UPDATER (NO BLUR)
      * ========================================================================= */
     function updateCartSections() {
-        $.post(ajaxUrl, $('#hkdev-co-process-order').serialize() + '&action=hkdev_co_checkout_update_cart', function(res) {
+        $.post(ajaxUrl, $('#hkdev-co-process-order').serialize() + '&action=hkdev_co_checkout_update_cart&security=' + hkdev_ajax_obj.co_nonce, function(res) {
             if(res.success) {
                 $('#hkdev-co-items-ajax').html(res.data.items_html);
                 $('#hkdev-co-totals-ajax').html(res.data.totals_html);
@@ -58,7 +58,7 @@ jQuery(document).ready(function($) {
         
         if(newQty < 1) return;
 
-        $.post(ajaxUrl, { action: 'hkdev_co_checkout_update_cart', type: 'qty', key: key, qty: newQty }, function(res) {
+        $.post(ajaxUrl, { action: 'hkdev_co_checkout_update_cart', type: 'qty', key: key, qty: newQty, security: hkdev_ajax_obj.co_nonce }, function(res) {
             if(res.success) {
                 $('#hkdev-co-items-ajax').html(res.data.items_html);
                 $('#hkdev-co-totals-ajax').html(res.data.totals_html);
@@ -71,7 +71,7 @@ jQuery(document).ready(function($) {
         
         const key = $(this).closest('.hkdev-co-summary-item').data('key');
         
-        $.post(ajaxUrl, { action: 'hkdev_co_checkout_update_cart', type: 'remove', key: key }, function(res) {
+        $.post(ajaxUrl, { action: 'hkdev_co_checkout_update_cart', type: 'remove', key: key, security: hkdev_ajax_obj.co_nonce }, function(res) {
             if(res.data && res.data.cart_empty) {
                 location.reload(); 
             } else {
@@ -91,7 +91,7 @@ jQuery(document).ready(function($) {
         const $btn = $(this);
         $btn.prop('disabled', true).text('...');
         
-        $.post(ajaxUrl, { action: 'hkdev_co_apply_coupon', coupon_code: code }, function(res) {
+        $.post(ajaxUrl, { action: 'hkdev_co_apply_coupon', coupon_code: code, security: hkdev_ajax_obj.co_nonce }, function(res) {
             $btn.prop('disabled', false).text(hkdevJsT('apply_btn'));
             if(res.success) {
                 $('#hkdev-co-items-ajax').html(res.data.items_html);
@@ -108,7 +108,7 @@ jQuery(document).ready(function($) {
         e.preventDefault();
         const code = $(this).data('coupon');
         
-        $.post(ajaxUrl, { action: 'hkdev_co_remove_coupon', coupon_code: code }, function(res) {
+        $.post(ajaxUrl, { action: 'hkdev_co_remove_coupon', coupon_code: code, security: hkdev_ajax_obj.co_nonce }, function(res) {
             if(res.success) {
                 $('#hkdev-co-items-ajax').html(res.data.items_html);
                 $('#hkdev-co-totals-ajax').html(res.data.totals_html);

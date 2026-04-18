@@ -1,7 +1,7 @@
 :root {
-    --brand-primary: #8b0f0f;      /* Dark Green */
-    --brand-secondary: #d32f2f;    /* Red for price & Buy Now */
-    --brand-light: #f0f7f0;        /* Light Green Backgrounds */
+    --brand-primary: #d4af37;      /* Gold — matches Mini-Cart */
+    --brand-secondary: #c9a227;    /* Darker gold for price & Buy Now */
+    --brand-light: rgba(212, 175, 55, 0.1); /* Soft gold backgrounds */
     --sp-text-color: #374151;
     --sp-border-color: #e5e7eb;
 }

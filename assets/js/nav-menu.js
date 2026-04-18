@@ -92,7 +92,7 @@ jQuery(document).ready(function($) {
 
         searchTimer = setTimeout(function() {
             $.ajax({
-                url: hkdev_ajax.ajax_url,
+                url: hkdev_ajax_obj.ajax_url,
                 type: 'GET',
                 data: {
                     action: 'hkdev_search_action',
@@ -128,12 +128,13 @@ jQuery(document).ready(function($) {
         $minicartBody.css({'opacity': '0.5', 'pointer-events': 'none'});
 
         $.ajax({
-            url: hkdev_ajax.ajax_url,
+            url: hkdev_ajax_obj.ajax_url,
             type: 'POST',
             data: {
                 action: 'hkdev_mc_update_qty',
                 cart_item_key: cartItemKey,
-                qty: currentVal
+                qty: currentVal,
+                security: hkdev_ajax_obj.mc_nonce
             },
             success: function(res) {
                 if (res && res.fragments) {
@@ -155,7 +156,7 @@ jQuery(document).ready(function($) {
 
                 // আপনার কাস্টম চেকআউটের রিফ্রেশ
                 if ($('#hkdev-co-items-ajax').length > 0) {
-                    $.post(hkdev_ajax.ajax_url, { action: 'hkdev_co_checkout_update_cart' }, function(coRes) {
+                    $.post(hkdev_ajax_obj.ajax_url, { action: 'hkdev_co_checkout_update_cart', security: hkdev_ajax_obj.co_nonce }, function(coRes) {
                         if(coRes.success) {
                             $('#hkdev-co-items-ajax').html(coRes.data.items_html);
                             $('#hkdev-co-totals-ajax').html(coRes.data.totals_html);
