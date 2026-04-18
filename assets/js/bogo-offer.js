@@ -1,6 +1,6 @@
 /**
  * HKDEV BOGO Offer Scripts - Complete & Fixed
- * Version: 2.0.0 (Production Ready)
+ * Version: 2.1.0 (Global animation + Thank You page support)
  */
 
 jQuery(document).ready(function($) {
@@ -12,7 +12,7 @@ jQuery(document).ready(function($) {
     
     const BOGO_CONFIG = {
         congratsTextTemplate: (typeof hkdev_bogo_vars !== 'undefined') ? hkdev_bogo_vars.congrats_msg : 'Congratulations! You got %d free item(s)!',
-        ajaxUrl: (typeof hkdev_bogo_vars !== 'undefined') ? hkdev_bogo_vars.ajaxurl : '/wp-admin/admin-ajax.php',
+        ajaxUrl: (typeof hkdev_bogo_vars !== 'undefined') ? hkdev_bogo_vars.ajaxurl : (typeof hkdev_ajax_obj !== 'undefined' ? hkdev_ajax_obj.ajax_url : '/wp-admin/admin-ajax.php'),
         nonce: (typeof hkdev_bogo_vars !== 'undefined') ? hkdev_bogo_vars.nonce : '',
         toastDuration: 3000,
         confettiCount: 50,
@@ -46,7 +46,7 @@ jQuery(document).ready(function($) {
     }
 
     /**
-     * ✅ Count free items from cart accurately
+     * ✅ Count free items from cart DOM (used on checkout/cart pages)
      */
     function countFreeItemsFromCart() {
         let totalFreeCount = 0;
@@ -164,7 +164,7 @@ jQuery(document).ready(function($) {
     }
 
     /**
-     * ✅ Trigger confetti
+     * ✅ Trigger confetti / falling flowers animation
      */
     function triggerFlowerConfetti() {
         const flowers = ['🌸', '🌼', '🌺', '🌻', '💚', '✨', '🎉', '🎊', '🎈'];
@@ -188,19 +188,19 @@ jQuery(document).ready(function($) {
                 'pointer-events': 'none',
                 'opacity': '1',
                 'transform': 'rotate(' + rotation + 'deg)',
-                'animation': `confettiFall ${duration}s linear ${delay}s forwards`
+                'animation': 'hkdev-fall ' + duration + 's linear ' + delay + 's forwards'
             });
 
             $('body').append(confetti);
 
             setTimeout(function() {
                 confetti.remove();
-            }, (duration + delay) * 1000);
+            }, (duration + delay) * 1000 + 200);
         }
     }
 
     /**
-     * ✅ Check and show BOGO notification
+     * ✅ Check and show BOGO notification (DOM-based, for checkout/cart pages)
      */
     function checkAndShowBogoNotification() {
         if (STATE.isProcessing) return;
@@ -211,8 +211,6 @@ jQuery(document).ready(function($) {
             const currentCount = countFreeItemsFromCart();
             const prevCount = STATE.previousCount;
 
-            console.log('BOGO Check - Previous:', prevCount, 'Current:', currentCount);
-
             if (currentCount > prevCount) {
                 const isBangla = /[\u0980-\u09FF]/.test(BOGO_CONFIG.congratsTextTemplate);
                 const displayCount = isBangla ? englishToBengla(currentCount) : currentCount;
@@ -221,8 +219,6 @@ jQuery(document).ready(function($) {
                 
                 showBogoMiddleToast(finalMessage);
                 triggerFlowerConfetti();
-
-                console.log('BOGO Notification:', finalMessage);
             }
 
             STATE.previousCount = currentCount;
@@ -231,35 +227,83 @@ jQuery(document).ready(function($) {
         }, 300);
     }
 
+    /**
+     * ✅ Global: Fetch free item count from server and animate if increased.
+     * Used on any page when a product is added to cart via AJAX.
+     */
+    function checkFreeItemsViaAjax(callback) {
+        if (!BOGO_CONFIG.nonce) return;
+
+        $.post(BOGO_CONFIG.ajaxUrl, {
+            action: 'hkdev_recalc_bogo',
+            nonce: BOGO_CONFIG.nonce
+        }, function(response) {
+            if (response && response.success) {
+                const newCount = parseInt(response.data.free_count) || 0;
+                if (typeof callback === 'function') {
+                    callback(newCount);
+                }
+            }
+        });
+    }
+
     // ============================================================================
     // 3. INIT
     // ============================================================================
 
     $(document).ready(function() {
+        // Initialize previous count from DOM (checkout/cart) or via server
         setTimeout(function() {
-            STATE.previousCount = countFreeItemsFromCart();
-            updateFreeItemCountDisplay();
-            console.log('BOGO Initialized - Free count:', STATE.previousCount);
+            const domCount = countFreeItemsFromCart();
+            if (domCount > 0) {
+                STATE.previousCount = domCount;
+                updateFreeItemCountDisplay();
+            } else {
+                // Initialize from server for non-cart pages
+                checkFreeItemsViaAjax(function(serverCount) {
+                    STATE.previousCount = serverCount;
+                });
+            }
         }, 500);
+
+        // ── Thank You page: auto-trigger falling flowers ──────────────────────
+        if (typeof hkdev_ajax_obj !== 'undefined' && hkdev_ajax_obj.is_order_received === '1') {
+            setTimeout(function() {
+                triggerFlowerConfetti();
+            }, 600);
+        }
     });
 
     // ============================================================================
     // 4. EVENT LISTENERS
     // ============================================================================
 
-    // WooCommerce events
-    $(document.body).on('updated_cart_totals updated_checkout added_to_cart wc_fragments_loaded', function() {
-        console.log('WC Event triggered');
+    // WooCommerce checkout/cart events (DOM-based check)
+    $(document.body).on('updated_cart_totals updated_checkout wc_fragments_loaded', function() {
         checkAndShowBogoNotification();
     });
 
-    // Custom HKDEV checkout events
+    // Custom HKDEV checkout events (DOM-based check)
     $(document.body).on('hkdev_cart_updated hkdev_checkout_updated', function() {
-        console.log('HKDEV Event triggered');
         checkAndShowBogoNotification();
     });
 
-    // Manual trigger
+    // ── Global: WooCommerce AJAX add-to-cart (fires on shop, product pages, etc.) ──
+    $(document.body).on('added_to_cart', function() {
+        checkFreeItemsViaAjax(function(newCount) {
+            if (newCount > STATE.previousCount) {
+                const isBangla = /[\u0980-\u09FF]/.test(BOGO_CONFIG.congratsTextTemplate);
+                const displayCount = isBangla ? englishToBengla(newCount) : newCount;
+                const finalMessage = BOGO_CONFIG.congratsTextTemplate.replace('%d', displayCount);
+
+                showBogoMiddleToast(finalMessage);
+                triggerFlowerConfetti();
+            }
+            STATE.previousCount = newCount;
+        });
+    });
+
+    // Manual trigger helpers
     window.hkdevBogoCheck = function() {
         checkAndShowBogoNotification();
     };
@@ -269,8 +313,12 @@ jQuery(document).ready(function($) {
         checkAndShowBogoNotification();
     };
 
+    window.hkdevTriggerFlowers = function() {
+        triggerFlowerConfetti();
+    };
+
     // ============================================================================
-    // 5. MUTATION OBSERVER
+    // 5. MUTATION OBSERVER (checkout/cart pages)
     // ============================================================================
 
     const observer = new MutationObserver(function(mutations) {

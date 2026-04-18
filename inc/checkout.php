@@ -8,6 +8,15 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 /* =========================================================================
+ * 0. HIDE DEFAULT WOOCOMMERCE COUPON NOTICE ON CHECKOUT
+ * Removes the "Have a coupon? Click here to enter your code" toggle notice.
+ * The custom coupon input inside the order summary remains visible.
+ * ========================================================================= */
+add_action( 'init', function() {
+    remove_action( 'woocommerce_before_checkout_form', 'woocommerce_checkout_coupon_form', 10 );
+} );
+
+/* =========================================================================
  * 1. GLOBAL FIELD CONFIGURATION (YES / NO)
  * ========================================================================= */
 $hkdev_field_config = array(

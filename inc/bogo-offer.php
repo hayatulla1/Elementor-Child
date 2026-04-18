@@ -247,6 +247,7 @@ function hkdev_single_product_bogo_notice() {
 add_action( 'wp_ajax_hkdev_recalc_bogo', 'hkdev_ajax_recalc_bogo' );
 add_action( 'wp_ajax_nopriv_hkdev_recalc_bogo', 'hkdev_ajax_recalc_bogo' );
 function hkdev_ajax_recalc_bogo() {
+    check_ajax_referer( 'hkdev_bogo_nonce', 'nonce' );
     WC()->cart->calculate_totals();
     
     wp_send_json_success([

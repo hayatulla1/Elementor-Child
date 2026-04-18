@@ -108,10 +108,18 @@ function hello_elementor_child_scripts_styles() {
     // Global AJAX Object: URL + nonces used by inline JS across modules.
     // JS files must send the matching nonce as the `security` POST field.
     wp_localize_script( 'jquery', 'hkdev_ajax_obj', [
-        'ajax_url'   => admin_url( 'admin-ajax.php' ),
-        'mc_nonce'   => wp_create_nonce( 'hkdev_mc_nonce' ),
-        'co_nonce'   => wp_create_nonce( 'hkdev_co_nonce' ),
-        'cart_nonce' => wp_create_nonce( 'hkdev_cart_nonce' ),
+        'ajax_url'         => admin_url( 'admin-ajax.php' ),
+        'mc_nonce'         => wp_create_nonce( 'hkdev_mc_nonce' ),
+        'co_nonce'         => wp_create_nonce( 'hkdev_co_nonce' ),
+        'cart_nonce'       => wp_create_nonce( 'hkdev_cart_nonce' ),
+        'is_order_received' => ( function_exists( 'is_wc_endpoint_url' ) && is_wc_endpoint_url( 'order-received' ) ) ? '1' : '0',
+    ] );
+
+    // BOGO offer variables: congrats message and nonce for global use.
+    wp_localize_script( 'jquery', 'hkdev_bogo_vars', [
+        'ajaxurl'     => admin_url( 'admin-ajax.php' ),
+        'nonce'       => wp_create_nonce( 'hkdev_bogo_nonce' ),
+        'congrats_msg' => function_exists( 'hkdev_t' ) ? hkdev_t( 'free_item_congrats' ) : 'Congratulations! You got %d free item(s)!',
     ] );
 
 }
