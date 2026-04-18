@@ -2,10 +2,10 @@
     /* ============================================================== */
     /* 🎨 PROFESSIONAL BRAND COLORS (UPDATED)                        🎨 */
     /* ============================================================== */
-    --brand-primary: #631f28 !important;      /* New Brand Color */
-    --brand-hover: #4a171e !important;        /* Darker shade for hover */
-    --brand-secondary: #e11d48 !important;    /* Accent/Warning */
-    --brand-light: #fdf5f6 !important;        /* Very light tint for backgrounds */
+    --brand-primary: #d4af37 !important;      /* Gold - matches Mini-Cart */
+    --brand-hover: #c9a227 !important;        /* Darker gold for hover */
+    --brand-secondary: #ebd076 !important;    /* Light gold accent */
+    --brand-light: rgba(212, 175, 55, 0.12) !important; /* Soft gold tint for backgrounds */
     --co-border-color: #e5e7eb !important;    /* Clean Gray Border */
     --co-bg-main: #f9fafb !important;         /* App background */
     --text-dark: #111827 !important;          /* High contrast text */

@@ -1,10 +1,10 @@
 :root { 
     /* ============================================================== */
-    /* 🎨 BRAND COLORS: Matches Checkout & Single Product          🎨 */
+    /* 🎨 BRAND COLORS: Matches Mini-Cart color scheme             🎨 */
     /* ============================================================== */
-    --hkdev-brand-primary:   #24523a; /* Main Theme Color (Green) */
-    --hkdev-brand-secondary: #8b0000; /* Totals & Highlights (Dark Red) */
-    --hkdev-brand-light:     #f0f7f0; /* Light Background (Light Green) */
+    --hkdev-brand-primary:   #d4af37; /* Main Theme Color (Gold) */
+    --hkdev-brand-secondary: #c9a227; /* Totals & Highlights (Darker Gold) */
+    --hkdev-brand-light:     rgba(212, 175, 55, 0.1); /* Light Gold Background */
     --hkdev-border-color:    #e4e4e7; /* Border Color (Gray) */
     --hkdev-text-color:      #1f2937; /* Main Text Color */
     /* ============================================================== */
