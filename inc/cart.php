@@ -143,7 +143,7 @@ function hkdev_get_cart_items_html() {
                 // Native Class Filter
                 $row_class = apply_filters( 'woocommerce_cart_item_class', 'hkdev-cart-item-row', $cart_item, $cart_item_key );
                 ?>
-                <div class="<?php echo esc_attr( $row_class ); ?>" data-key="<?php echo esc_attr($cart_item_key); ?>">
+                <div class="<?php echo esc_attr( $row_class ); ?>" data-key="<?php echo esc_attr($cart_item_key); ?>" data-free-count="<?php echo intval($cart_item['hkdev_free_count'] ?? 0); ?>">
                     
                     <?php if ( HKDEV_SHOW_ITEM_IMAGE === 'yes' ) : ?>
                     <div class="item-img">
@@ -205,6 +205,16 @@ function hkdev_get_cart_items_html() {
                 <?php
             }
         endforeach; ?>
+    </div>
+    <?php
+    $hkdev_cart_total_qty  = WC()->cart->get_cart_contents_count();
+    $hkdev_cart_total_free = function_exists('hkdev_get_total_free_items_in_cart') ? hkdev_get_total_free_items_in_cart() : 0;
+    $hkdev_cart_paid_qty   = max(0, $hkdev_cart_total_qty - $hkdev_cart_total_free);
+    ?>
+    <div class="hkdev-co-items-count-summary">
+        <span class="paid-count">Paid Items: <strong><?php echo esc_html( $hkdev_cart_paid_qty ); ?></strong></span>
+        <span class="separator"> | </span>
+        <span class="free-count">Free items: <strong><?php echo esc_html( $hkdev_cart_total_free ); ?></strong></span>
     </div>
     <?php
     // WOOCOMMERCE HOOK: After Cart Contents
