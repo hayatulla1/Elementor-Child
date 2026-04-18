@@ -46,7 +46,9 @@ if (!function_exists('hkdev_buy_now_redirect_handler')) {
  */
 function hkdev_get_sales_by_period($product_id, $days = 7) {
     if ($days <= 0) return 0;
-    $date_from = gmdate('Y-m-d', strtotime("-{$days} days"));
+    // Use current_time('timestamp', true) for a UTC-based reference so that
+    // the resulting date string is consistent with WooCommerce's UTC storage.
+    $date_from = gmdate('Y-m-d', strtotime("-{$days} days", current_time('timestamp', true)));
     $args = array(
         'status' => array('wc-completed', 'wc-processing'),
         'date_created' => '>' . $date_from,

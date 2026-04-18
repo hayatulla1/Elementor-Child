@@ -260,7 +260,10 @@ function hkdev_custom_checkout_shortcode() {
                             }
                             ?>
                             <input type="hidden" name="billing_email" value="<?php
-                            $guest_email = 'guest_' . substr( md5( WC()->session->get_customer_id() . wp_generate_password( 8, false ) ), 0, 8 ) . '@order.local';
+                            // Derive a stable, non-predictable placeholder email from the
+                            // WooCommerce session ID so the same value is used throughout
+                            // the current checkout session.
+                            $guest_email = 'guest_' . substr( md5( WC()->session->get_customer_id() ), 0, 8 ) . '@order.local';
                             echo esc_attr( $guest_email );
                         ?>">
                         </div>
