@@ -410,8 +410,10 @@ function hkdev_co_ajax_update_cart_handler() {
     if ( WC()->cart->is_empty() ) wp_send_json_success( [ 'cart_empty' => true ] );
 
     wp_send_json_success( [
-        'items_html'  => hkdev_co_get_items_html(),
-        'totals_html' => hkdev_co_get_totals_html(),
+        'items_html'         => hkdev_co_get_items_html(),
+        'totals_html'        => hkdev_co_get_totals_html(),
+        'cart_count'         => WC()->cart->get_cart_contents_count(),
+        'minicart_body_html' => '<div class="hkdev-minicart-body">' . hkdev_mc_get_cart_html() . '</div>',
     ] );
 }
 
@@ -428,7 +430,13 @@ function hkdev_co_apply_coupon_handler() {
 
     if ($applied) {
         wc_clear_notices();
-        wp_send_json_success(['message' => 'Coupon Applied!', 'items_html' => hkdev_co_get_items_html(), 'totals_html' => hkdev_co_get_totals_html()]);
+        wp_send_json_success([
+            'message'            => 'Coupon Applied!',
+            'items_html'         => hkdev_co_get_items_html(),
+            'totals_html'        => hkdev_co_get_totals_html(),
+            'cart_count'         => WC()->cart->get_cart_contents_count(),
+            'minicart_body_html' => '<div class="hkdev-minicart-body">' . hkdev_mc_get_cart_html() . '</div>',
+        ]);
     } else {
         $errors = wc_get_notices('error');
         $error_msg = !empty($errors) ? strip_tags($errors[0]['notice']) : 'Invalid Coupon';
@@ -446,7 +454,13 @@ function hkdev_co_remove_coupon_handler() {
     if ( ! empty( $coupon_code ) ) WC()->cart->remove_coupon( $coupon_code ); 
     WC()->cart->calculate_totals();
     wc_clear_notices();
-    wp_send_json_success(['message' => 'Coupon Removed', 'items_html' => hkdev_co_get_items_html(), 'totals_html' => hkdev_co_get_totals_html()]);
+    wp_send_json_success([
+        'message'            => 'Coupon Removed',
+        'items_html'         => hkdev_co_get_items_html(),
+        'totals_html'        => hkdev_co_get_totals_html(),
+        'cart_count'         => WC()->cart->get_cart_contents_count(),
+        'minicart_body_html' => '<div class="hkdev-minicart-body">' . hkdev_mc_get_cart_html() . '</div>',
+    ]);
 }
 
 /* =========================================================================

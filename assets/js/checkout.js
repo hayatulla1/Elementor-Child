@@ -39,11 +39,24 @@ jQuery(document).ready(function($) {
     /* =========================================================================
      * 3. AJAX CART UPDATER (NO BLUR)
      * ========================================================================= */
+
+    // Apply mini-cart + cart-count fragments returned by every cart-update response.
+    function applyCartFragments(data) {
+        if (data.cart_count !== undefined) {
+            $('.hkdev-nav-cart-count').text(data.cart_count);
+        }
+        if (data.minicart_body_html) {
+            $('div.hkdev-minicart-body').replaceWith(data.minicart_body_html);
+        }
+        $(document.body).trigger('wc_fragments_refreshed');
+    }
+
     function updateCartSections() {
         $.post(ajaxUrl, $('#hkdev-co-process-order').serialize() + '&action=hkdev_co_checkout_update_cart&security=' + hkdev_ajax_obj.co_nonce, function(res) {
             if(res.success) {
                 $('#hkdev-co-items-ajax').html(res.data.items_html);
                 $('#hkdev-co-totals-ajax').html(res.data.totals_html);
+                applyCartFragments(res.data);
             }
         });
     }
@@ -52,30 +65,41 @@ jQuery(document).ready(function($) {
      * 4. CART ITEM MODIFICATIONS
      * ========================================================================= */
     $(document).on('click', '.hkdev-co-qty-mod', function() {
-        const key = $(this).closest('.hkdev-co-summary-item').data('key');
-        const current = parseInt($(this).closest('.hkdev-co-summary-item').find('.hkdev-co-qty-val').text());
-        const newQty = $(this).data('act') === 'plus' ? current + 1 : current - 1;
-        
+        const $btn    = $(this);
+        const $item   = $btn.closest('.hkdev-co-summary-item');
+        const key     = $item.data('key');
+        const current = parseInt($item.find('.hkdev-co-qty-val').text()) || 1;
+        const newQty  = $btn.data('act') === 'plus' ? current + 1 : current - 1;
+
         if(newQty < 1) return;
+
+        // Visual loading state — disable stepper while request is in-flight.
+        $item.find('.hkdev-co-qty-stepper-ui').css({'opacity': '0.5', 'pointer-events': 'none'});
 
         $.post(ajaxUrl, { action: 'hkdev_co_checkout_update_cart', type: 'qty', key: key, qty: newQty, security: hkdev_ajax_obj.co_nonce }, function(res) {
             if(res.success) {
                 $('#hkdev-co-items-ajax').html(res.data.items_html);
                 $('#hkdev-co-totals-ajax').html(res.data.totals_html);
+                applyCartFragments(res.data);
             }
+        }).fail(function() {
+            // Re-enable stepper on failure
+            $item.find('.hkdev-co-qty-stepper-ui').css({'opacity': '1', 'pointer-events': 'auto'});
         });
     });
 
     $(document).on('click', '.hkdev-co-item-remove-trigger', function() {
         if(!confirm(hkdevJsT('confirm_remove_item'))) return;
-        
+
         const key = $(this).closest('.hkdev-co-summary-item').data('key');
-        
+
         $.post(ajaxUrl, { action: 'hkdev_co_checkout_update_cart', type: 'remove', key: key, security: hkdev_ajax_obj.co_nonce }, function(res) {
             if(res.data && res.data.cart_empty) {
-                location.reload(); 
-            } else {
-                updateCartSections();
+                location.reload();
+            } else if (res.success) {
+                $('#hkdev-co-items-ajax').html(res.data.items_html);
+                $('#hkdev-co-totals-ajax').html(res.data.totals_html);
+                applyCartFragments(res.data);
             }
         });
     });
@@ -97,6 +121,7 @@ jQuery(document).ready(function($) {
                 $('#hkdev-co-items-ajax').html(res.data.items_html);
                 $('#hkdev-co-totals-ajax').html(res.data.totals_html);
                 $('#hkdev-co-coupon-code').val(''); 
+                applyCartFragments(res.data);
                 showToast(res.data.message, 'success');
             } else {
                 showToast(res.data.message, 'error');
@@ -112,6 +137,7 @@ jQuery(document).ready(function($) {
             if(res.success) {
                 $('#hkdev-co-items-ajax').html(res.data.items_html);
                 $('#hkdev-co-totals-ajax').html(res.data.totals_html);
+                applyCartFragments(res.data);
                 showToast(res.data.message, 'success');
             }
         });
