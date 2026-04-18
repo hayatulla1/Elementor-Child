@@ -8,16 +8,9 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-// 1. ENQUEUE ASSETS (🚨 Uses dynamic versioning so CSS changes apply INSTANTLY 🚨)
-add_action( 'wp_enqueue_scripts', 'hkdev_nav_menu_assets' );
-function hkdev_nav_menu_assets() {
-    $css_version = file_exists(get_stylesheet_directory() . '/assets/css/nav-menu.css') ? filemtime(get_stylesheet_directory() . '/assets/css/nav-menu.css') : time();
-    $js_version  = file_exists(get_stylesheet_directory() . '/assets/js/nav-menu.js') ? filemtime(get_stylesheet_directory() . '/assets/js/nav-menu.js') : time();
-
-    wp_enqueue_style( 'hkdev-nav-style', get_stylesheet_directory_uri() . '/assets/css/nav-menu.css', array(), $css_version );
-    wp_enqueue_script( 'hkdev-nav-script', get_stylesheet_directory_uri() . '/assets/js/nav-menu.js', array('jquery'), $js_version, true );
-    wp_localize_script( 'hkdev-nav-script', 'hkdev_ajax', array( 'ajax_url' => admin_url( 'admin-ajax.php' ) ) );
-}
+// Note: CSS/JS assets for this module are auto-loaded by functions.php
+// from /assets/css/nav-menu.css and /assets/js/nav-menu.js respectively.
+// The global hkdev_ajax_obj (including mc_nonce) is also output there.
 
 // Register Custom Menu
 add_action( 'after_setup_theme', 'hkdev_register_custom_menu' );
@@ -53,12 +46,12 @@ function hkdev_mc_get_cart_html() {
                     <div class="hkdev-mc-item" data-key="<?php echo esc_attr($cart_item_key); ?>">
                         <div class="hkdev-mc-img">
                             <a href="<?php echo esc_url( $product_permalink ); ?>" aria-hidden="true" tabindex="-1">
-                                <?php echo $thumbnail; ?>
+                                <?php echo wp_kses_post( $thumbnail ); ?>
                             </a>
                         </div>
                         <div class="hkdev-mc-details">
                             <a href="<?php echo esc_url( $product_permalink ); ?>" class="hkdev-mc-name">
-                                <?php echo $item_name; // BOGO HTML allowed here ?>
+                                <?php echo wp_kses_post( $item_name ); // BOGO HTML allowed here ?>
                             </a>
                             
                             <!-- SEPARATED PRICE AND SUBTOTAL -->
@@ -131,10 +124,12 @@ function hkdev_custom_cart_fragments( $fragments ) {
 add_action('wp_ajax_hkdev_mc_update_qty', 'hkdev_mc_update_qty_handler');
 add_action('wp_ajax_nopriv_hkdev_mc_update_qty', 'hkdev_mc_update_qty_handler');
 function hkdev_mc_update_qty_handler() {
-    if ( isset($_POST['cart_item_key']) && isset($_POST['qty']) ) {
-        $cart_item_key = sanitize_key($_POST['cart_item_key']);
-        $quantity = absint($_POST['qty']);
-        
+    check_ajax_referer( 'hkdev_mc_nonce', 'security' );
+
+    if ( isset( $_POST['cart_item_key'] ) && isset( $_POST['qty'] ) ) {
+        $cart_item_key = sanitize_key( $_POST['cart_item_key'] );
+        $quantity      = absint( $_POST['qty'] );
+
         WC()->cart->set_quantity( $cart_item_key, $quantity );
         WC_AJAX::get_refreshed_fragments();
     }
@@ -183,15 +178,15 @@ function hkdev_search_callback() {
 add_shortcode( 'hkdev_nav_menu', 'hkdev_nav_menu_shortcode' );
 function hkdev_nav_menu_shortcode() {
     ob_start();
-    $logo_url = wp_get_attachment_image_url( get_theme_mod( 'custom_logo' ), 'full' );
-    $logo_html = $logo_url ? '<img src="'.esc_url($logo_url).'" alt="'.esc_attr(get_bloginfo('name')).'">' : '<h2>'.esc_html(get_bloginfo('name')).'</h2>';
+    $logo_url  = wp_get_attachment_image_url( get_theme_mod( 'custom_logo' ), 'full' );
+    $site_name = get_bloginfo( 'name' );
+    if ( $logo_url ) {
+        $logo_html = '<img src="' . esc_url( $logo_url ) . '" alt="' . esc_attr( $site_name ) . '">';
+    } else {
+        $logo_html = '<h2>' . esc_html( $site_name ) . '</h2>';
+    }
     $cart_count = class_exists( 'WooCommerce' ) && WC()->cart ? WC()->cart->get_cart_contents_count() : 0;
-    ?>
-    <!-- Fonts & Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-
-    <header class="hkdev-main-header" id="hkdev-header">
+    ?><header class="hkdev-main-header" id="hkdev-header">
         <div class="hkdev-header-container">
             <div class="hkdev-header-left">
                 <button type="button" class="hkdev-mobile-toggle" id="hkdev-mobile-toggle" aria-label="<?php esc_attr_e( 'Toggle Menu', 'hkdev' ); ?>">

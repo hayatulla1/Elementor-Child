@@ -56,7 +56,7 @@ function hkdev_final_mega_menu($atts) {
     $categories = get_terms($args);
 
     if (empty($categories) || is_wp_error($categories)) {
-        return;
+        return '';
     }
 
     ob_start();
@@ -65,7 +65,7 @@ function hkdev_final_mega_menu($atts) {
     <div class="hkdev-mm-wrapper">
 
         <button class="hkdev-mm-btn hkdev-mm-toggle-btn" type="button">
-            ☰ <?php echo hkdev_t('all_categories'); ?>
+            ☰ <?php echo esc_html( hkdev_t('all_categories') ); ?>
         </button>
 
         <div class="hkdev-mm-content">
@@ -75,7 +75,7 @@ function hkdev_final_mega_menu($atts) {
                         <!-- Parent Category -->
                         <a href="<?php echo esc_url(get_term_link($category)); ?>" class="hkdev-mm-item">
                             <span class="hkdev-mm-name"><?php echo esc_html($category->name); ?></span>
-                            <small class="hkdev-mm-count"><?php echo $category->count; ?> <?php echo hkdev_t('items'); ?></small>
+                            <small class="hkdev-mm-count"><?php echo absint($category->count); ?> <?php echo esc_html( hkdev_t('items') ); ?></small>
                         </a>
 
                         <!-- Child Categories -->

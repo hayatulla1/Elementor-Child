@@ -86,11 +86,6 @@ function hkdev_category_slider_shortcode( $atts ) {
 
     ob_start();
     ?>
-    <!-- Swiper & Icons CDN -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-
     <div class="hkdev-cat-section-wrapper" id="<?php echo esc_attr( $unique_id ); ?>">
         <div class="hkdev-cat-container">
             <div class="swiper hkdev-category-swiper">

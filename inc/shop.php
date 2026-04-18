@@ -46,7 +46,7 @@ if (!function_exists('hkdev_buy_now_redirect_handler')) {
  */
 function hkdev_get_sales_by_period($product_id, $days = 7) {
     if ($days <= 0) return 0;
-    $date_from = date('Y-m-d', strtotime("-{$days} days"));
+    $date_from = gmdate('Y-m-d', strtotime("-{$days} days"));
     $args = array(
         'status' => array('wc-completed', 'wc-processing'),
         'date_created' => '>' . $date_from,
@@ -161,7 +161,7 @@ function hkdev_render_single_product_card($post_id, $trending_days = 0, $is_caro
             // HOOK: Shop Loop Item Title
             do_action( 'woocommerce_shop_loop_item_title' ); 
             ?>
-            <h2 class="hkdev-title"><a href="<?php echo esc_url($permalink); ?>"><?php echo get_the_title($post_id); ?></a></h2>
+            <h2 class="hkdev-title"><a href="<?php echo esc_url($permalink); ?>"><?php echo esc_html( get_the_title($post_id) ); ?></a></h2>
             
             <?php 
             // HOOK: After Shop Loop Item Title (Usually for Rating, Extra Info)
@@ -289,7 +289,7 @@ function hkdev_master_shop_shortcode($atts) {
         'exclude'          => '', 
         'type'             => 'recent', 
         'days'             => 0,        
-        'order_by'         => 'DSC', 
+        'order_by'         => 'DESC', 
         'show_tabs'        => 'yes',
         'include_children' => 'yes',
         'is_related'       => 'no',
@@ -364,11 +364,6 @@ function hkdev_master_shop_shortcode($atts) {
     ob_start();
     ?>
 
-    <!-- External Assets -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-
     <div class="hkdev-shop-wrapper" id="<?php echo esc_attr($unique_id); ?>"
          data-limit="<?php echo esc_attr($atts['limit']); ?>" 
          data-columns="<?php echo esc_attr($atts['columns']); ?>"
@@ -415,7 +410,7 @@ function hkdev_master_shop_shortcode($atts) {
                         <button class="hkdev-tab-item active" data-slug="<?php echo esc_attr($atts['category']); ?>"><?php echo function_exists('hkdev_t') ? hkdev_t('all') : 'All'; ?></button>
                         <?php foreach ($categories as $cat) : ?>
                             <button class="hkdev-tab-item" data-slug="<?php echo esc_attr($cat->slug); ?>">
-                                <?php echo esc_html($cat->name); ?> <span class="hkdev-tab-count"><?php echo $cat->count; ?></span>
+                                <?php echo esc_html($cat->name); ?> <span class="hkdev-tab-count"><?php echo absint($cat->count); ?></span>
                             </button>
                         <?php endforeach; ?>
                     </div>
@@ -463,7 +458,7 @@ function hkdev_master_shop_shortcode($atts) {
 add_shortcode('hkdev_shop', 'hkdev_master_shop_shortcode');
 
 function hkdev_trending_shop_shortcode($atts) {
-    $atts = shortcode_atts(array('limit' => 8, 'columns' => 4, 'days' => 7, 'cat' => '', 'exclude' => '', 'include_children' => 'yes', 'order_by' => 'DSC', 'style' => 'grid'), $atts);
+    $atts = shortcode_atts(array('limit' => 8, 'columns' => 4, 'days' => 7, 'cat' => '', 'exclude' => '', 'include_children' => 'yes', 'order_by' => 'DESC', 'style' => 'grid'), $atts);
     return hkdev_master_shop_shortcode(array('limit' => $atts['limit'], 'columns' => $atts['columns'], 'category' => $atts['cat'], 'exclude' => $atts['exclude'], 'include_children' => $atts['include_children'], 'type' => 'trending', 'days' => $atts['days'], 'order_by' => $atts['order_by'], 'show_tabs' => 'no', 'style' => $atts['style']));
 }
 add_shortcode('hkdev_trending', 'hkdev_trending_shop_shortcode');
