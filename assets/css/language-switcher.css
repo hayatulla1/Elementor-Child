@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@600;700;800&display=swap');
+
 #hkdev-floating-lang-wrapper {
     position: fixed !important;
     bottom: 30px !important;
@@ -7,30 +9,33 @@
 
 .hkdev-lang-btn-el {
     all: initial !important; /* Resets any conflicting theme CSS */
-    background-color: #631f28 !important;
+    background: linear-gradient(135deg, #18b83f, #0f8f2f) !important; /* Sera Khabar Green */
     color: #ffffff !important;
     border: 2px solid #ffffff !important;
-    padding: 10px 20px !important;
-    border-radius: 50px !important;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
-    font-weight: bold !important;
+    padding: 10px 22px !important;
+    border-radius: 999px !important; /* Perfect pill shape */
+    font-family: 'Hind Siliguri', sans-serif !important;
+    font-weight: 700 !important;
     font-size: 14px !important;
     cursor: pointer !important;
-    box-shadow: 0 10px 25px rgba(99, 31, 40, 0.4) !important;
+    box-shadow: 0 10px 25px rgba(24, 184, 63, 0.35) !important; /* Soft Green Shadow */
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
     gap: 8px !important;
     line-height: 1 !important;
-    letter-spacing: normal !important;
-    text-transform: none !important;
+    letter-spacing: 0.5px !important;
+    text-transform: uppercase !important;
     text-decoration: none !important;
-    transition: all 0.3s ease !important;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important; /* Smooth Apple-like easing */
 }
 
 .hkdev-lang-btn-el:hover {
-    background-color: #4a171e !important;
-    transform: translateY(-3px) !important;
+    background: linear-gradient(135deg, #ffd400, #18b83f) !important; /* Sera Khabar Gold to Green transition */
+    color: #071006 !important; /* Deep dark text on hover for contrast */
+    border-color: #ffd400 !important; /* Gold border on hover */
+    transform: translateY(-4px) scale(1.05) !important; /* Smooth lift */
+    box-shadow: 0 14px 30px rgba(24, 184, 63, 0.45) !important;
 }
 
 .hkdev-lang-btn-el svg {
@@ -39,11 +44,28 @@
     fill: none !important;
     stroke: #ffffff !important;
     display: block !important;
+    transition: stroke 0.3s ease !important;
 }
 
+/* Ensure SVG icon color changes to dark when hovering over the gold background */
+.hkdev-lang-btn-el:hover svg {
+    stroke: #071006 !important;
+}
+
+/* Mobile Responsiveness */
 @media (max-width: 768px) {
     #hkdev-floating-lang-wrapper {
         bottom: 20px !important;
         left: 20px !important;
+    }
+    
+    .hkdev-lang-btn-el {
+        padding: 8px 18px !important;
+        font-size: 13px !important;
+    }
+
+    .hkdev-lang-btn-el svg {
+        width: 16px !important;
+        height: 16px !important;
     }
 }

@@ -1,115 +1,153 @@
 :root {
-    /* ============================================================== */
-    /* 🎨 BRAND COLORS FOR HERO SLIDER                               */
-    /* ============================================================== */
-    --hkdev-hero-primary: #1b5e20;      /* Main Brand Color (Green) */
-    --hkdev-hero-arrow-bg: rgba(255, 255, 255, 0.8); /* Arrow Box Color */
-    --hkdev-hero-arrow-icon: #1b5e20;   /* Arrow Icon Color */
-    /* ============================================================== */
+    /* Brand Colors */
+    --hkdev-hero-primary: #18b83f;
+    --hkdev-hero-secondary: #ffd400;
+    --hkdev-hero-dark: #071006;
+
+    /* Background / Overlay */
+    --hkdev-hero-overlay-left: rgba(7, 16, 6, 0.45);
+    --hkdev-hero-overlay-right: rgba(7, 16, 6, 0.25);
+    --hkdev-hero-glow-yellow: rgba(255, 212, 0, 0.12);
+    --hkdev-hero-glow-green: rgba(24, 184, 63, 0.12);
+
+    /* Slider Size - Fixed to 16:9 */
+    --hkdev-hero-ratio: 16 / 9;
+    --hkdev-hero-max-height: 800px;
+    
+    /* Border / Shadow */
+    --hkdev-hero-radius-desktop: 0 0 32px 32px;
+    --hkdev-hero-radius-mobile: 0 0 16px 16px;
+    --hkdev-hero-shadow: 0 20px 50px rgba(0, 0, 0, 0.18);
+
+    /* Navigation */
+    --hkdev-hero-arrow-size: 48px;
+    --hkdev-hero-arrow-mobile: 36px;
+    
+    /* Ken Burns Animation Speed */
+    --hkdev-hero-zoom-duration: 3s;
 }
 
+/* Main Wrapper */
 .hkdev-hero-section-wrapper {
-    width: 100% !important;
-    max-width: 1920px !important;
-    margin: 0 auto !important;
-    position: relative !important;
-    overflow: hidden !important;
+    width: 100%;
+    max-width: 1920px;
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--hkdev-hero-radius-desktop);
+    box-shadow: var(--hkdev-hero-shadow);
+    background: var(--hkdev-hero-dark);
 }
 
+/* Premium Gradient Overlays */
+.hkdev-hero-section-wrapper::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+    background: 
+        linear-gradient(90deg, var(--hkdev-hero-overlay-left) 0%, transparent 40%, var(--hkdev-hero-overlay-right) 100%),
+        radial-gradient(circle at 15% 15%, var(--hkdev-hero-glow-yellow), transparent 35%),
+        radial-gradient(circle at 85% 85%, var(--hkdev-hero-glow-green), transparent 35%);
+}
+
+/* Swiper Container */
 .hkdev-hero-swiper {
-    width: 100% !important;
-    /* 1920x1080 is exactly 16/9 aspect ratio */
-    /* This makes it perfectly responsive on all devices */
-    aspect-ratio: 16 / 9 !important; 
-    max-height: 700px !important; /* Cap height on ultrawide screens */
-    background-color: #f3f4f6 !important; 
+    width: 100%;
+    height: auto;
+    aspect-ratio: var(--hkdev-hero-ratio);
+    max-height: var(--hkdev-hero-max-height);
 }
 
 .hkdev-hero-slide {
-    width: 100% !important;
-    height: 100% !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    overflow: hidden !important;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.hkdev-hero-link {
-    width: 100% !important;
-    height: 100% !important;
-    display: block !important;
-}
-
+/* Image Handling - Cover & Professional Zoom */
 .hkdev-hero-slide img {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover !important;
-    object-position: center !important;
-    display: block !important;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures container is covered */
+    object-position: center;
+    transition: transform var(--hkdev-hero-zoom-duration) ease-out;
+    transform: scale(1);
 }
 
-/* Navigation Arrows */
+/* Ken Burns Effect */
+.swiper-slide-active img {
+    transform: scale(1.05);
+}
+
+/* Navigation Arrows (Glassmorphism) */
 .hkdev-hero-nav-btn {
-    position: absolute !important;
-    top: 50% !important;
-    transform: translateY(-50%) !important;
-    width: 45px !important;
-    height: 45px !important;
-    background-color: var(--hkdev-hero-arrow-bg) !important;
-    color: var(--hkdev-hero-arrow-icon) !important;
-    border-radius: 50% !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    cursor: pointer !important;
-    z-index: 10 !important;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
-    transition: all 0.3s ease !important;
-    font-size: 18px !important;
-    opacity: 0 !important; /* Hidden by default, shows on hover */
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: var(--hkdev-hero-arrow-size);
+    height: var(--hkdev-hero-arrow-size);
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+    opacity: 0;
 }
 
 .hkdev-hero-section-wrapper:hover .hkdev-hero-nav-btn {
-    opacity: 1 !important;
+    opacity: 1;
 }
 
 .hkdev-hero-nav-btn:hover {
-    background-color: var(--hkdev-hero-primary) !important;
-    color: #fff !important;
-    transform: translateY(-50%) scale(1.1) !important;
+    background: var(--hkdev-hero-primary);
+    border-color: var(--hkdev-hero-primary);
+    box-shadow: 0 0 15px rgba(24, 184, 63, 0.5);
+    color: #fff;
 }
 
-.hkdev-hero-prev { left: 20px !important; }
-.hkdev-hero-next { right: 20px !important; }
+.hkdev-hero-prev { left: 20px; }
+.hkdev-hero-next { right: 20px; }
 
-/* Swiper Pagination Dots */
+/* Pagination Dots */
 .hkdev-hero-swiper .swiper-pagination-bullet {
-    background: #ffffff !important;
-    opacity: 0.6 !important;
-    width: 10px !important;
-    height: 10px !important;
-    transition: all 0.3s ease !important;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2) !important;
+    background: rgba(255, 255, 255, 0.6) !important;
+    opacity: 1 !important;
+    transition: all 0.3s ease;
 }
 
 .hkdev-hero-swiper .swiper-pagination-bullet-active {
-    background: var(--hkdev-hero-primary) !important;
-    opacity: 1 !important;
-    width: 25px !important; /* Capsule shaped active dot */
-    border-radius: 5px !important;
+    background: var(--hkdev-hero-secondary) !important;
+    width: 28px;
+    border-radius: 5px;
 }
 
-/* Mobile Responsiveness */
+/* Responsive Scaling */
 @media (max-width: 768px) {
-    .hkdev-hero-nav-btn {
-        width: 35px !important;
-        height: 35px !important;
-        font-size: 14px !important;
-        opacity: 1 !important; /* Always show arrows on mobile */
+    .hkdev-hero-section-wrapper {
+        border-radius: var(--hkdev-hero-radius-mobile);
     }
-    .hkdev-hero-prev { left: 10px !important; }
-    .hkdev-hero-next { right: 10px !important; }
     
-    .hkdev-hero-swiper .swiper-pagination-bullet { width: 8px !important; height: 8px !important; }
-    .hkdev-hero-swiper .swiper-pagination-bullet-active { width: 20px !important; }
+    .hkdev-hero-nav-btn {
+        opacity: 1;
+        width: var(--hkdev-hero-arrow-mobile);
+        height: var(--hkdev-hero-arrow-mobile);
+    }
+    
+    .hkdev-hero-prev { left: 10px; }
+    .hkdev-hero-next { right: 10px; }
+    
+    /* Keep 16:9 on mobile or adjust for better view */
+    .hkdev-hero-swiper {
+        min-height: 220px;
+    }
 }

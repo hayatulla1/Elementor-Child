@@ -1,41 +1,48 @@
-@import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700;800&display=swap');
 
 :root {
     /* ============================================================== */
-    /* 🎨 BRAND COLORS FOR CATEGORY SLIDER                           🎨 */
+    /* 🎨 BRAND COLORS FOR CATEGORY SLIDER (MATCHED WITH SHOP)       🎨 */
     /* ============================================================== */
-    --hkdev-cat-primary: #27ae60;      /* Arrow Background Color (Green) */
-    --hkdev-cat-bg:      #eaeaea;      /* Section Background (Light Gray) */
-    --hkdev-cat-text:    #1f2937;      /* Category Text Color */
+    --cat-brand-primary: #18b83f !important;    /* Sera Khabar Green */
+    --cat-brand-secondary: #ffd400 !important;  /* Sera Khabar Gold/Yellow */
+    --cat-brand-dark: #071006 !important;       /* Deep Forest Dark */
+    --cat-bg-main: transparent !important;      /* Integrates with page bg */
+    --cat-bg-soft: #f1f8ef !important;          /* Soft Minty Box Background */
+    --cat-border-color: rgba(7, 16, 6, 0.08) !important;
+    
+    --cat-shadow: 0 8px 24px rgba(7, 16, 6, 0.04) !important;
+    --cat-hover-shadow: 0 14px 30px rgba(24, 184, 63, 0.12) !important;
+    --cat-transition: 0.3s ease !important;
     /* ============================================================== */
 }
 
 .hkdev-cat-section-wrapper {
-    background-color: var(--hkdev-cat-bg) !important;
-    padding: 40px 0 !important;
+    background-color: var(--cat-bg-main) !important;
+    padding: 30px 0 !important;
     font-family: 'Hind Siliguri', sans-serif !important;
     width: 100% !important;
     box-sizing: border-box !important;
 }
 
 .hkdev-cat-container {
-    max-width: 1200px !important;
+    max-width: 1240px !important; /* Matched with Shop/Single Product width */
     margin: 0 auto !important;
     position: relative !important;
-    padding: 0 40px !important; /* Space for arrows */
+    padding: 0 40px !important; 
 }
 
 /* Swiper Container */
 .hkdev-category-swiper {
     width: 100% !important;
     overflow: hidden !important;
-    padding: 15px 0 !important; /* Space for drop shadows */
+    padding: 15px 0 25px 0 !important; /* Space for drop shadows */
 }
 
 /* Individual Slide */
 .hkdev-cat-slide {
     text-align: center !important;
-    transition: 0.3s !important;
+    transition: var(--cat-transition) !important;
 }
 
 .hkdev-cat-link {
@@ -46,18 +53,19 @@
     gap: 12px !important;
 }
 
-/* Image Box (White Square with rounded corners) */
+/* Image Box (Premium styling matched with Shop Grid) */
 .hkdev-cat-img-box {
     background: #ffffff !important;
     width: 120px !important;
     height: 120px !important;
-    border-radius: 16px !important;
+    border-radius: 20px !important; /* Matched with Shop Card Radius */
+    border: 1px solid var(--cat-border-color) !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    padding: 15px !important;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05) !important;
-    transition: all 0.3s ease !important;
+    padding: 20px !important;
+    box-shadow: var(--cat-shadow) !important;
+    transition: all var(--cat-transition) !important;
     margin: 0 auto !important;
     box-sizing: border-box !important;
 }
@@ -65,71 +73,99 @@
 .hkdev-cat-img-box img {
     width: 100% !important;
     height: 100% !important;
-    object-fit: contain !important; /* Ensures icon fits nicely */
-    transition: transform 0.3s ease !important;
+    object-fit: contain !important; 
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .hkdev-cat-slide:hover .hkdev-cat-img-box {
-    transform: translateY(-5px) !important;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1) !important;
+    transform: translateY(-6px) !important;
+    box-shadow: var(--cat-hover-shadow) !important;
+    border-color: rgba(24, 184, 63, 0.25) !important;
+    background: var(--cat-bg-soft) !important;
 }
 
 .hkdev-cat-slide:hover .hkdev-cat-img-box img {
-    transform: scale(1.1) !important;
+    transform: scale(1.12) !important;
 }
 
 /* Category Text */
 .hkdev-cat-name {
     font-size: 15px !important;
-    font-weight: 600 !important;
-    color: var(--hkdev-cat-text) !important;
+    font-weight: 800 !important; /* Matched title weight */
+    color: var(--cat-brand-dark) !important;
     text-transform: capitalize !important;
+    transition: color var(--cat-transition) !important;
 }
 
-/* Navigation Arrows */
+.hkdev-cat-slide:hover .hkdev-cat-name {
+    color: var(--cat-brand-primary) !important;
+}
+
+/* Navigation Arrows (Matched exactly with Shop Grid Carousel Nav) */
 .hkdev-cat-nav-btn {
     position: absolute !important;
-    top: 40% !important;
+    top: 45% !important;
     transform: translateY(-50%) !important;
-    width: 40px !important;
-    height: 40px !important;
-    background-color: var(--hkdev-cat-primary) !important;
-    color: #ffffff !important;
+    width: 42px !important;
+    height: 42px !important;
+    background: rgba(255,255,255,0.95) !important;
+    border: 1px solid rgba(24, 184, 63, 0.18) !important;
+    color: var(--cat-brand-primary) !important;
     border-radius: 50% !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     cursor: pointer !important;
     z-index: 10 !important;
-    box-shadow: 0 4px 10px rgba(39, 174, 96, 0.3) !important;
-    transition: all 0.2s ease !important;
-    font-size: 14px !important;
+    box-shadow: 0 10px 24px rgba(0,0,0,0.1) !important;
+    transition: all var(--cat-transition) !important;
+    font-size: 16px !important;
 }
 
 .hkdev-cat-nav-btn:hover {
-    background-color: #1e8449 !important;
-    transform: translateY(-50%) scale(1.1) !important;
+    background: linear-gradient(135deg, var(--cat-brand-secondary), var(--cat-brand-primary)) !important;
+    color: var(--cat-brand-dark) !important;
+    transform: translateY(-50%) scale(1.08) !important;
+    border-color: transparent !important;
+    box-shadow: 0 12px 28px rgba(24, 184, 63, 0.25) !important;
 }
 
 .hkdev-cat-prev { left: 0 !important; }
 .hkdev-cat-next { right: 0 !important; }
 
 .swiper-button-disabled {
-    opacity: 0.5 !important;
-    cursor: not-allowed !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
 }
 
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
-    .hkdev-cat-container { padding: 0 30px !important; }
-    .hkdev-cat-img-box { width: 90px !important; height: 90px !important; border-radius: 12px !important; padding: 10px !important; }
-    .hkdev-cat-name { font-size: 13px !important; }
-    .hkdev-cat-nav-btn { width: 32px !important; height: 32px !important; font-size: 12px !important; }
+    .hkdev-cat-section-wrapper { padding: 20px 0 !important; }
+    .hkdev-cat-container { padding: 0 16px !important; } /* Removed side padding since arrows are hidden */
+    
+    .hkdev-cat-img-box { 
+        width: 85px !important; 
+        height: 85px !important; 
+        border-radius: 15px !important; 
+        padding: 14px !important; 
+    }
+    
+    .hkdev-cat-name { 
+        font-size: 13px !important; 
+        font-weight: 700 !important;
+    }
+    
+    .hkdev-cat-nav-btn { 
+        display: none !important; /* Hide arrows on mobile just like the shop grid */ 
+    }
 }
 
 @media (max-width: 480px) {
-    .hkdev-cat-container { padding: 0 20px !important; }
-    .hkdev-cat-img-box { width: 75px !important; height: 75px !important; border-radius: 10px !important; }
+    .hkdev-cat-img-box { 
+        width: 75px !important; 
+        height: 75px !important; 
+        border-radius: 14px !important; 
+        padding: 12px !important;
+    }
     .hkdev-cat-name { font-size: 12px !important; }
-    .hkdev-cat-nav-btn { display: none !important; /* Hide arrows on very small screens for swipe-only */ }
 }
