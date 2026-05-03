@@ -12,7 +12,7 @@ jQuery(document).ready(function($) {
             'apply_btn': { bn: 'এপ্লাই করুন', en: 'Apply' },
             'invalid_phone': { bn: 'অনুগ্রহ করে সঠিক মোবাইল নম্বর দিন।', en: 'Please enter a valid mobile number.' },
             'required_field_missing': { bn: 'অনুগ্রহ করে সকল প্রয়োজনীয় তথ্য (*) পূরণ করুন।', en: 'Please fill in all required fields (*).' },
-            'invalid_email': { bn: 'অনুগ্র�� করে সঠিক ইমেইল দিন।', en: 'Please enter a valid email.' },
+            'invalid_email': { bn: 'অনুগ্র করে সঠিক ইমেইল দিন।', en: 'Please enter a valid email.' },
             'processing': { bn: 'প্রসেস হচ্ছে...', en: 'Processing...' },
             'order_error': { bn: 'অর্ডার করতে সমস্যা হয়েছে।', en: 'There was a problem processing your order.' },
             'confirm_order': { bn: 'অর্ডার কনফার্ম করুন', en: 'Confirm Order' }

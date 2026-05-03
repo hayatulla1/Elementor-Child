@@ -13,7 +13,7 @@ jQuery(document).ready(function($) {
     });
 
     // ==========================================
-    // 2. MOBILE MENU & MINI CART TOGGLE LOGIC
+    // 2. MOBILE MENU, MINI CART & ACCORDION
     // ==========================================
     const $overlay = $('#hkdev-common-overlay');
     const $mobileSidebar = $('#hkdev-mobile-sidebar');
@@ -32,6 +32,42 @@ jQuery(document).ready(function($) {
         $overlay.removeClass('active');
         $body.removeClass('hkdev-no-scroll');
     }
+
+    // --- Mobile Accordion Logic (For Sub-menus) ---
+    function initMobileAccordion() {
+        const $mobileMenu = $('.hkdev-mobile-menu-ul');
+        
+        // Add toggle buttons to parent items if they don't exist
+        $mobileMenu.find('li.menu-item-has-children').each(function() {
+            if ($(this).find('> .hkdev-mobile-sub-toggle').length === 0) {
+                $(this).append('<span class="hkdev-mobile-sub-toggle"><i class="fa-solid fa-chevron-down"></i></span>');
+            }
+        });
+
+        // Toggle Click Event
+        $(document).off('click', '.hkdev-mobile-sub-toggle').on('click', '.hkdev-mobile-sub-toggle', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const $this = $(this);
+            const $subMenu = $this.siblings('.sub-menu');
+            
+            if ($subMenu.is(':visible')) {
+                $subMenu.slideUp(300);
+                $this.removeClass('active');
+            } else {
+                // ক্লোজ অন্য সব ওপেন মেনু (অপশনাল - যদি একবারে একটিই খোলা রাখতে চান)
+                // $this.closest('ul').find('.sub-menu').slideUp(300);
+                // $this.closest('ul').find('.hkdev-mobile-sub-toggle').removeClass('active');
+                
+                $subMenu.slideDown(300);
+                $this.addClass('active');
+            }
+        });
+    }
+
+    // Initialize Mobile Accordion
+    initMobileAccordion();
 
     // Open Mobile Menu
     $('#hkdev-mobile-toggle').off('click').on('click', function(e) {
@@ -144,12 +180,12 @@ jQuery(document).ready(function($) {
                     $(document.body).trigger('wc_fragments_refreshed');
                 }
 
-                // মেইন পেজ যদি কার্ট পেজ হয়, সেটি রিফ্রেশ করা
+                // মেইন পেজ যদি কার্ট পেজ হয়, সেটি রিফ্রেশ করা
                 if ($('.woocommerce-cart-form').length > 0) {
                     $('[name="update_cart"]').prop('disabled', false).trigger('click');
                 }
                 
-                // মেইন পেজ যদি চেকআউট পেজ হয়, সেটি রিফ্রেশ করা
+                // মেইন পেজ যদি চেকআউট পেজ হয়, সেটি রিফ্রেশ করা
                 if ($('form.checkout').length > 0) {
                     $(document.body).trigger('update_checkout');
                 }
@@ -173,7 +209,6 @@ jQuery(document).ready(function($) {
     // ==========================================
     // 5. 🔥 SYNC MINI CART WITH MAIN CART/CHECKOUT
     // ==========================================
-    // কার্ট বা চেকআউট পেজে কোনো আপডেট হলে মিনি কার্ট অটোমেটিক রিফ্রেশ হবে!
     $(document.body).on('updated_cart_totals updated_checkout', function() {
         $(document.body).trigger('wc_fragment_refresh');
     });

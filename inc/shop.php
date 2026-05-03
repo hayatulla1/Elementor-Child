@@ -16,15 +16,7 @@
  * - include_children: (string) Show products from child categories. (Values: "yes", "no", Default: "yes")
  * - style:            (string) Layout style: "grid" or "carousel". (Default: "grid")
  * * * Example: [hkdev_shop category="grocery" columns="4"]
- * ============================================================================
- */
-
-/**
- * ============================================================================
- * SHORTCODE DOCUMENTATION & USAGE GUIDE
- * ============================================================================
- * [hkdev_shop] - Main Versatile Shop Shortcode
- * 100% WOOCOMMERCE HOOK COMPATIBLE (Safely integrated without duplicating defaults)
+ *******[hkdev_shop is_related="yes" show_tabs="no"]
  * ============================================================================
  */
 
@@ -46,8 +38,6 @@ if (!function_exists('hkdev_buy_now_redirect_handler')) {
  */
 function hkdev_get_sales_by_period($product_id, $days = 7) {
     if ($days <= 0) return 0;
-    // Use current_time('timestamp', true) for a UTC-based reference so that
-    // the resulting date string is consistent with WooCommerce's UTC storage.
     $date_from = gmdate('Y-m-d', strtotime("-{$days} days", current_time('timestamp', true)));
     $args = array(
         'status' => array('wc-completed', 'wc-processing'),
@@ -68,16 +58,12 @@ function hkdev_get_sales_by_period($product_id, $days = 7) {
     return $total_qty;
 }
 
-// 2. Product Card Rendering Helper (100% NATIVE HOOK SUPPORTED)
+// 2. Product Card Rendering Helper
 function hkdev_render_single_product_card($post_id, $trending_days = 0, $is_carousel = false) {
     global $product;
     $product = wc_get_product($post_id);
     if (!$product) return;
 
-    // ==============================================================================
-    // DUPLICATE PREVENTION: Temporarily remove WC default elements from hooks
-    // This allows 3rd-party plugins to inject items without breaking our custom HTML
-    // ==============================================================================
     $wc_defaults = [
         ['woocommerce_before_shop_loop_item', 'woocommerce_template_loop_product_link_open', 10],
         ['woocommerce_before_shop_loop_item_title', 'woocommerce_show_product_loop_sale_flash', 10],
@@ -88,7 +74,6 @@ function hkdev_render_single_product_card($post_id, $trending_days = 0, $is_caro
         ['woocommerce_after_shop_loop_item', 'woocommerce_template_loop_add_to_cart', 10],
     ];
     foreach ($wc_defaults as $hook) { remove_action($hook[0], $hook[1], $hook[2]); }
-    // ==============================================================================
 
     $stock_status = $product->get_stock_status();
     $is_variable  = $product->is_type('variable');
@@ -101,18 +86,10 @@ function hkdev_render_single_product_card($post_id, $trending_days = 0, $is_caro
     $card_class = $is_carousel ? 'hkdev-product-card swiper-slide' : 'hkdev-product-card';
     ?>
     <div class="<?php echo esc_attr($card_class); ?> product type-product">
-        
-        <?php 
-        // HOOK: Before Shop Loop Item (Usually for Wishlist icons / wrapper open)
-        do_action( 'woocommerce_before_shop_loop_item' ); 
-        ?>
+        <?php do_action( 'woocommerce_before_shop_loop_item' ); ?>
 
         <div class="hkdev-img-box" style="position: relative;">
-            
-            <?php 
-            // HOOK: Before Shop Loop Item Title (Usually for Badges, Custom Images, Quick View)
-            do_action( 'woocommerce_before_shop_loop_item_title' ); 
-            ?>
+            <?php do_action( 'woocommerce_before_shop_loop_item_title' ); ?>
 
             <a href="<?php echo esc_url($permalink); ?>">
                 <?php echo $product->get_image('woocommerce_thumbnail'); ?>
@@ -159,25 +136,15 @@ function hkdev_render_single_product_card($post_id, $trending_days = 0, $is_caro
                 <span class="hkdev-stock-dot <?php echo esc_attr($stock_status); ?>" title="<?php echo ($stock_status == 'instock') ? esc_attr(function_exists('hkdev_t') ? hkdev_t('in_stock') : 'In Stock') : esc_attr(function_exists('hkdev_t') ? hkdev_t('out_of_stock') : 'Out of Stock'); ?>"></span>
             </div>
 
-            <?php 
-            // HOOK: Shop Loop Item Title
-            do_action( 'woocommerce_shop_loop_item_title' ); 
-            ?>
+            <?php do_action( 'woocommerce_shop_loop_item_title' ); ?>
             <h2 class="hkdev-title"><a href="<?php echo esc_url($permalink); ?>"><?php echo esc_html( get_the_title($post_id) ); ?></a></h2>
             
-            <?php 
-            // HOOK: After Shop Loop Item Title (Usually for Rating, Extra Info)
-            // Note: Our "0 ৳ (FREE)" magic automatically works through $product->get_price_html() below!
-            do_action( 'woocommerce_after_shop_loop_item_title' ); 
-            ?>
+            <?php do_action( 'woocommerce_after_shop_loop_item_title' ); ?>
             <div class="hkdev-price-container">
                 <?php echo $product->get_price_html(); ?>
             </div>
 
-            <?php 
-            // HOOK: After Shop Loop Item (Usually for Add to Cart forms, Variations)
-            do_action( 'woocommerce_after_shop_loop_item' ); 
-            ?>
+            <?php do_action( 'woocommerce_after_shop_loop_item' ); ?>
 
             <div class="hkdev-footer-actions">
                 <?php if ($stock_status == 'instock') : ?>
@@ -200,18 +167,13 @@ function hkdev_render_single_product_card($post_id, $trending_days = 0, $is_caro
                     <button disabled class="hkdev-btn-disabled"><?php echo function_exists('hkdev_t') ? hkdev_t('stock_out') : 'Stock Out'; ?></button>
                 <?php endif; ?>
             </div>
-            
         </div>
     </div>
     <?php
-    
-    // ==============================================================================
-    // RESTORE DEFAULTS: Put WooCommerce defaults back so we don't break other loops!
-    // ==============================================================================
     foreach ($wc_defaults as $hook) { add_action($hook[0], $hook[1], $hook[2]); }
 }
 
-// 3. AJAX Callback
+// 3. AJAX Callback (Updated for Stock Sorting)
 add_action('wp_ajax_hkdev_filter_products', 'hkdev_ajax_filter_products_callback');
 add_action('wp_ajax_nopriv_hkdev_filter_products', 'hkdev_ajax_filter_products_callback');
 
@@ -227,18 +189,31 @@ function hkdev_ajax_filter_products_callback() {
 
     $order = ($order_by === 'ASC') ? 'ASC' : 'DESC';
 
+    // Base Args with Stock Status meta key
     $args = array(
         'post_type'      => 'product',
         'posts_per_page' => $limit,
         'post_status'    => 'publish',
-        'order'          => $order
+        'meta_key'       => '_stock_status', // Required for sorting by stock
     );
 
+    // Dynamic sorting: Stock first, then selected type
     if ($type === 'best_selling') {
-        $args['meta_key'] = 'total_sales';
-        $args['orderby']  = 'meta_value_num';
+        $args['orderby'] = array(
+            'meta_value'     => 'ASC', // instock (i) before outofstock (o)
+            'meta_value_num' => $order, // sales count
+        );
+        // Special handle when multiple metas are used
+        $args['meta_query'] = array(
+            'relation' => 'AND',
+            array('key' => '_stock_status'),
+            array('key' => 'total_sales')
+        );
     } else {
-        $args['orderby']  = 'date';
+        $args['orderby'] = array(
+            'meta_value' => 'ASC', // instock first
+            'date'       => $order, // recent first
+        );
     }
 
     $tax_query = array('relation' => 'AND');
@@ -282,7 +257,7 @@ function hkdev_ajax_filter_products_callback() {
     wp_die();
 }
 
-// 4. Main Master Shortcode [hkdev_shop]
+// 4. Main Master Shortcode [hkdev_shop] (Updated for Stock Sorting)
 function hkdev_master_shop_shortcode($atts) {
     $atts = shortcode_atts(array(
         'limit'            => 12,
@@ -306,8 +281,26 @@ function hkdev_master_shop_shortcode($atts) {
         'post_type'      => 'product',
         'posts_per_page' => (int)$atts['limit'],
         'post_status'    => 'publish',
-        'order'          => $order
+        'meta_key'       => '_stock_status',
     );
+
+    // Sorting Logic: Always prioritize Stock Status ASC (i before o)
+    if ($atts['type'] === 'best_selling') {
+        $args['orderby'] = array(
+            'meta_value'     => 'ASC',
+            'meta_value_num' => $order,
+        );
+        $args['meta_query'] = array(
+            'relation' => 'AND',
+            array('key' => '_stock_status'),
+            array('key' => 'total_sales')
+        );
+    } else {
+        $args['orderby'] = array(
+            'meta_value' => 'ASC',
+            'date'       => $order,
+        );
+    }
 
     $current_cat_id = 0;
     $exclude_ids = array();
@@ -330,13 +323,6 @@ function hkdev_master_shop_shortcode($atts) {
         if (empty($atts['category'])) {
             $atts['category'] = $current_cat_obj->slug;
         }
-    }
-
-    if ($atts['type'] === 'best_selling') {
-        $args['meta_key'] = 'total_sales';
-        $args['orderby']  = 'meta_value_num';
-    } else {
-        $args['orderby']  = 'date';
     }
 
     $tax_query = array('relation' => 'AND');
